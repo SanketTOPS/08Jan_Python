@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2">Admin Dashboard</h1>
+            <p class="text-gray-500">Manage users and platform status.</p>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <div class="flex space-x-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm">
+                <a href="?status=" class="px-4 py-2 rounded-lg text-xs font-bold transition {% if not status_filter %}bg-black text-white shadow-md{% else %}text-gray-500 hover:bg-gray-50{% endif %}">
+                    All
+                </a>
+                <a href="?status=verified" class="px-4 py-2 rounded-lg text-xs font-bold transition {% if status_filter == 'verified' %}bg-black text-white shadow-md{% else %}text-gray-500 hover:bg-gray-50{% endif %}">
+                    Verified
+                </a>
+                <a href="?status=unverified" class="px-4 py-2 rounded-lg text-xs font-bold transition {% if status_filter == 'unverified' %}bg-black text-white shadow-md{% else %}text-gray-500 hover:bg-gray-50{% endif %}">
+                    Unverified
+                </a>
+            </div>
+            
+            <a href="{% url 'add_user' %}" class="gradient-btn text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg hover:shadow-black/20 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Add New User
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">User</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Contact</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Joined</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for u in users %}
+                <tr class="hover:bg-gray-50/50 transition group">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold mr-3 shadow-inner">
+                                {{ u.full_name|slice:":1" }}
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm">{{ u.full_name }}</p>
+                                <p class="text-xs text-gray-400">{{ u.email }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-sm font-medium">{{ u.mobile }}</p>
+                        <p class="text-xs text-gray-400">{{ u.city }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-wrap gap-1">
+                            {% if u.is_verified %}
+                                <span class="px-2 py-0.5 bg-green-50 text-green-600 text-[10px] font-bold uppercase rounded-md border border-green-100">Verified</span>
+                            {% else %}
+                                <span class="px-2 py-0.5 bg-yellow-50 text-yellow-600 text-[10px] font-bold uppercase rounded-md border border-yellow-100">Unverified</span>
+                            {% endif %}
+                            
+                            {% if not u.is_active %}
+                                <span class="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold uppercase rounded-md border border-red-100">Blocked</span>
+                            {% endif %}
+                            
+                            {% if u.is_staff %}
+                                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-[10px] font-bold uppercase rounded-md border border-purple-100">Admin</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-xs text-gray-500 font-medium">
+                        {{ u.date_joined|date:"M d, Y" }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-end space-x-2">
+                            <a href="{% url 'update_user' u.id %}" class="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition" title="Edit User">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </a>
+                            
+                            <form method="post" action="{% url 'toggle_user' u.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="p-2 {% if u.is_active %}text-red-400 hover:text-red-600 hover:bg-red-50{% else %}text-green-400 hover:text-green-600 hover:bg-green-50{% endif %} rounded-lg transition" title="{% if u.is_active %}Block{% else %}Unblock{% endif %}">
+                                    {% if u.is_active %}
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                    {% else %}
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            {% if not u.is_superuser %}
+                            <form method="post" action="{% url 'delete_user' u.id %}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.')">
+                                {% csrf_token %}
+                                <button type="submit" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete User">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-400">
+                        No users found matching the criteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

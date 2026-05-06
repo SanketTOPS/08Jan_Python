@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo JS</title>
+
+</head>
+
+<body>
+    <h1 style="text-align: center;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">Demo
+        Javascript - 4</h1>
+    <hr>
+
+    <script>
+        function sum(a, b) {
+            var ans = a + b
+            alert("Sum:" + ans)
+        }
+        function sub(a, b) {
+            var ans = a - b
+            alert("Sub:" + ans)
+        }
+        function mul(a, b) {
+            var ans = a * b
+            alert("Mul:" + ans)
+        }
+        function div(a, b) {
+            var ans = a / b
+            alert("Div:" + ans)
+        }
+
+        //sum(23, 89)
+
+        choice = Number(prompt("Enter your choice:"))
+        if (choice == 1) {
+            sum(34, 67)
+        }
+        else if (choice == 2) {
+            sub(45, 23)
+        }
+        else if (choice == 3) {
+            mul(45, 23)
+        }
+        else if (choice == 4) {
+            div(45, 23)
+        }
+        else {
+            alert("Error!Invalid choice...")
+        }
+    </script>
+
+</body>
+
+</html>

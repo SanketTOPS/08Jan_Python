@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="glass-card p-8 rounded-3xl shadow-2xl">
+        <h2 class="text-3xl font-bold mb-2 tracking-tight">Welcome Back</h2>
+        <p class="text-gray-500 mb-8">Access your workspace and notes.</p>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="flex justify-end">
+                <a href="{% url 'forgot_password' %}" class="text-sm font-bold text-gray-500 hover:text-black transition">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="w-full gradient-btn text-white py-4 rounded-xl font-bold text-lg shadow-lg">
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+            <p class="text-gray-500 text-sm">
+                New to NotesApp? 
+                <a href="{% url 'signup' %}" class="text-black font-bold hover:underline">Create Account</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

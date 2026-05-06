@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Notes - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2">Manage Notes</h1>
+            <p class="text-gray-500">Review and moderate community submissions.</p>
+        </div>
+        
+        <div class="flex space-x-2">
+            <a href="?status=Pending" class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'Pending' %}bg-black text-white{% else %}bg-white border text-gray-600 hover:border-black{% endif %}">
+                Pending
+            </a>
+            <a href="?status=Approved" class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'Approved' %}bg-black text-white{% else %}bg-white border text-gray-600 hover:border-black{% endif %}">
+                Approved
+            </a>
+            <a href="?status=Rejected" class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'Rejected' %}bg-black text-white{% else %}bg-white border text-gray-600 hover:border-black{% endif %}">
+                Rejected
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">User</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Note Details</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Category</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">File</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for note in notes %}
+                <tr class="hover:bg-gray-50/50 transition">
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-sm">{{ note.user.full_name }}</p>
+                        <p class="text-xs text-gray-400">{{ note.user.email }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-sm text-black">{{ note.title }}</p>
+                        <p class="text-xs text-gray-500 line-clamp-1">{{ note.description }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase rounded-md border border-gray-200">
+                            {{ note.category }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{ note.file.url }}" target="_blank" class="text-black text-xs font-bold hover:underline flex items-center">
+                            View File
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if note.status == 'Pending' %}
+                        <div class="flex space-x-2">
+                            <form method="post" action="{% url 'admin_note_action' note.id 'approve' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-green-700 transition">
+                                    Approve
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'admin_note_action' note.id 'reject' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-red-700 transition">
+                                    Reject
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <span class="text-xs font-bold uppercase {% if note.status == 'Approved' %}text-green-600{% else %}text-red-600{% endif %}">
+                            {{ note.status }}
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-400">
+                        No notes found for this status.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

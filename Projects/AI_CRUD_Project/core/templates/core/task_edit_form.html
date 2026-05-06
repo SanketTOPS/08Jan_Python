@@ -1,0 +1,23 @@
+<div id="task-{{ task.id }}" class="glass-card p-5 border-indigo-500/30">
+    <form hx-post="{% url 'task_update' task.id %}" 
+          hx-target="#task-{{ task.id }}" 
+          hx-swap="outerHTML"
+          class="flex flex-col gap-3">
+        <div class="flex gap-4 items-center">
+            <input type="text" name="title" value="{{ task.title }}" required
+                   class="glass-input flex-grow px-4 py-2 rounded-lg font-semibold">
+            <div class="flex gap-2">
+                <button type="submit" class="btn-primary px-4 py-2 rounded-lg text-sm font-bold">
+                    Save
+                </button>
+                <button hx-get="{% url 'task_list' %}"
+                        hx-target="body"
+                        class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold transition-all">
+                    Cancel
+                </button>
+            </div>
+        </div>
+        <textarea name="description" placeholder="Description..."
+                  class="glass-input w-full px-4 py-2 rounded-lg text-sm" rows="2">{{ task.description|default:'' }}</textarea>
+    </form>
+</div>

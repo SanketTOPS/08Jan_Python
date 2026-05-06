@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}My Notes - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-end mb-10">
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2">My Notes</h1>
+            <p class="text-gray-500">Track the status of your submissions.</p>
+        </div>
+        <a href="{% url 'add_note' %}" class="gradient-btn text-white px-6 py-3 rounded-xl font-bold flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Add New Note
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for note in notes %}
+        <div class="glass-card rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100 flex flex-col">
+            <div class="p-6 flex-grow">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase rounded-full">
+                        {{ note.category }}
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase
+                        {% if note.status == 'Pending' %}bg-yellow-50 text-yellow-600
+                        {% elif note.status == 'Approved' %}bg-green-50 text-green-600
+                        {% else %}bg-red-50 text-red-600{% endif %}">
+                        {{ note.status }}
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-black truncate">{{ note.title }}</h3>
+                <p class="text-gray-500 text-sm line-clamp-3 mb-4">{{ note.description }}</p>
+                
+                <div class="flex items-center text-xs text-gray-400">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    {{ note.created_at|date:"M d, Y" }}
+                </div>
+            </div>
+            
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+                <a href="{{ note.file.url }}" target="_blank" class="text-black text-sm font-bold hover:underline flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    Download File
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-20 text-center">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">No notes submitted yet</h3>
+            <p class="text-gray-500 mb-8">Ready to share your knowledge?</p>
+            <a href="{% url 'add_note' %}" class="gradient-btn text-white px-8 py-3 rounded-xl font-bold">
+                Create Your First Note
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

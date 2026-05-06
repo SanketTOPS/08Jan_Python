@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-20">
+    <!-- Hero Section -->
+    <section class="text-center space-y-6 animate-in fade-in slide-in-from-bottom-10 duration-700">
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter">Revolutionizing <span class="text-gray-400">Note-Taking.</span></h1>
+        <p class="text-xl text-gray-500 max-w-2xl mx-auto">We believe that great ideas deserve a better home. NotesApp is built for thinkers, creators, and students who want to capture and organize their thoughts effortlessly.</p>
+    </section>
+
+    <!-- Slideshow Section -->
+    <section class="relative h-[500px] rounded-[40px] overflow-hidden shadow-2xl group">
+        <div id="slideshow" class="h-full relative">
+            <div class="slide absolute inset-0 opacity-100 transition-opacity duration-1000">
+                <img src="{% static 'images/about/slide1.png' %}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/20 flex items-end p-12">
+                    <h3 class="text-white text-3xl font-bold">Focus on what matters.</h3>
+                </div>
+            </div>
+            <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000">
+                <img src="{% static 'images/about/slide2.png' %}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/20 flex items-end p-12">
+                    <h3 class="text-white text-3xl font-bold">Capture inspiration instantly.</h3>
+                </div>
+            </div>
+            <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000">
+                <img src="{% static 'images/about/slide3.png' %}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/20 flex items-end p-12">
+                    <h3 class="text-white text-3xl font-bold">Collaborate and grow.</h3>
+                </div>
+            </div>
+        </div>
+        <!-- Slideshow Controls -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+            <button onclick="setSlide(0)" class="slide-dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all"></button>
+            <button onclick="setSlide(1)" class="slide-dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all"></button>
+            <button onclick="setSlide(2)" class="slide-dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all"></button>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+            <h2 class="text-4xl font-bold">Our Mission</h2>
+            <p class="text-gray-600 leading-relaxed">At NotesApp, our mission is to empower individuals by providing a seamless, secure, and beautiful platform for knowledge management. We understand that in today's fast-paced world, information overload is real. We're here to help you filter the noise and focus on the signals.</p>
+            <div class="grid grid-cols-2 gap-6 pt-6">
+                <div class="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm">
+                    <h4 class="text-3xl font-bold mb-1">10k+</h4>
+                    <p class="text-sm text-gray-500">Active Users</p>
+                </div>
+                <div class="p-6 bg-white rounded-3xl border border-gray-100 shadow-sm">
+                    <h4 class="text-3xl font-bold mb-1">50k+</h4>
+                    <p class="text-sm text-gray-500">Notes Created</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-100 rounded-[40px] aspect-square flex items-center justify-center">
+            <div class="text-9xl opacity-10">📝</div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="space-y-12">
+        <div class="text-center">
+            <h2 class="text-4xl font-bold mb-4">What Our Users Say</h2>
+            <p class="text-gray-500">Trusted by students and professionals worldwide.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl relative group hover:-translate-y-2 transition duration-500">
+                <div class="text-yellow-400 mb-4">★★★★★</div>
+                <p class="text-gray-600 italic mb-6">"NotesApp has completely changed how I organize my university lectures. The interface is so clean and distraction-free."</p>
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-200"></div>
+                    <div>
+                        <p class="font-bold text-sm">Sarah Jenkins</p>
+                        <p class="text-xs text-gray-400">Computer Science Student</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl relative group hover:-translate-y-2 transition duration-500">
+                <div class="text-yellow-400 mb-4">★★★★★</div>
+                <p class="text-gray-600 italic mb-6">"As a writer, I need to capture ideas as they come. The mobile-friendly design of NotesApp makes it my go-to tool."</p>
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-200"></div>
+                    <div>
+                        <p class="font-bold text-sm">Michael Ross</p>
+                        <p class="text-xs text-gray-400">Freelance Writer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl relative group hover:-translate-y-2 transition duration-500">
+                <div class="text-yellow-400 mb-4">★★★★★</div>
+                <p class="text-gray-600 italic mb-6">"The best note-taking app I've used. Simple yet powerful enough for all my professional needs."</p>
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-full bg-gray-200"></div>
+                    <div>
+                        <p class="font-bold text-sm">Emily Chen</p>
+                        <p class="text-xs text-gray-400">Project Manager</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.slide-dot');
+
+    function setSlide(index) {
+        slides[currentSlide].style.opacity = 0;
+        dots[currentSlide].classList.remove('w-8', 'bg-white');
+        dots[currentSlide].classList.add('w-2', 'bg-white/50');
+        
+        currentSlide = index;
+        
+        slides[currentSlide].style.opacity = 1;
+        dots[currentSlide].classList.remove('w-2', 'bg-white/50');
+        dots[currentSlide].classList.add('w-8', 'bg-white');
+    }
+
+    function autoSlide() {
+        let next = (currentSlide + 1) % slides.length;
+        setSlide(next);
+    }
+
+    // Initialize
+    setSlide(0);
+    setInterval(autoSlide, 5000);
+</script>
+
+<style>
+    .slide-dot.w-8 { width: 2rem; }
+</style>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Inter', sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 40px; background: #f9f9f9; border-radius: 24px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .content { background: #ffffff; padding: 30px; border-radius: 16px; border: 1px solid #eee; }
+        .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #999; }
+        .brand { font-weight: bold; color: #000; font-size: 24px; text-decoration: none; }
+        .highlight { color: #000; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="#" class="brand">NOTES<span style="color: #999;">APP</span></a>
+        </div>
+        <div class="content">
+            <h2 style="margin-top: 0;">Hi {{ name }},</h2>
+            <p>Thank you for reaching out to us! We have received your message regarding <span class="highlight">"{{ subject }}"</span>.</p>
+            <p>Our team will review your inquiry and get back to you as soon as possible (usually within 24 hours).</p>
+            <p>In the meantime, feel free to explore your dashboard or check out our latest features.</p>
+            <p style="margin-bottom: 0;">Best regards,<br><strong>The NotesApp Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 NotesApp. All rights reserved.<br>101, Aditya Complex, Jalaram 2 Street Number 2, Rajkot, GJ.</p>
+        </div>
+    </div>
+</body>
+</html>

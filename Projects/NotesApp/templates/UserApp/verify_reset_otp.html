@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify OTP - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="bg-white rounded-[40px] shadow-2xl border border-gray-100 p-10 animate-in fade-in zoom-in duration-500">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-black text-white rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            </div>
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2">Verify OTP</h1>
+            <p class="text-gray-500 text-sm">We've sent a 6-digit code to <br><span class="font-bold text-black">{{ email }}</span></p>
+        </div>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {{ form.otp }}
+                {% if form.otp.errors %}
+                    <p class="text-red-500 text-xs text-center">{{ form.otp.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full gradient-btn text-white font-bold py-4 rounded-2xl shadow-xl hover:shadow-black/20 transition text-lg">
+                    Verify & Continue
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-8 text-center space-y-4">
+            <p class="text-sm text-gray-400">Didn't receive the code?</p>
+            <a href="{% url 'forgot_password' %}" class="text-sm font-bold text-black hover:underline">Resend OTP</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

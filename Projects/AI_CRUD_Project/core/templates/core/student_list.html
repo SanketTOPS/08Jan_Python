@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<header class="flex justify-between items-center mb-12">
+    <div>
+        <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+            Student Desk
+        </h1>
+        <p class="text-slate-400 mt-2">Academic Information Management System</p>
+    </div>
+    <div id="loader" class="htmx-indicator">
+        <svg class="animate-spin h-6 w-6 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+    </div>
+</header>
+
+<!-- Add Student Section -->
+<div class="glass-card p-8 mb-10">
+    <form hx-post="{% url 'student_create' %}" 
+          hx-target="#student-list" 
+          hx-swap="afterbegin" 
+          hx-on::after-request="this.reset()"
+          hx-indicator="#loader"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-400 ml-1">Student ID</label>
+            <input type="text" name="student_id" placeholder="e.g. STU-2024-001" required
+                   class="glass-input w-full px-5 py-3 rounded-xl">
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-400 ml-1">Full Name</label>
+            <input type="text" name="name" placeholder="Enter student name" required
+                   class="glass-input w-full px-5 py-3 rounded-xl">
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-400 ml-1">Subject</label>
+            <select name="subject" class="glass-input w-full px-5 py-3 rounded-xl appearance-none">
+                <option value="" disabled selected>Select Subject</option>
+                {% for subject in subjects %}
+                    <option value="{{ subject.id }}" class="bg-indigo-950">{{ subject.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-400 ml-1">Email Address</label>
+            <input type="email" name="email" placeholder="email@example.com" required
+                   class="glass-input w-full px-5 py-3 rounded-xl">
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-400 ml-1">Date of Birth</label>
+            <input type="date" name="dob" required
+                   class="glass-input w-full px-5 py-3 rounded-xl">
+        </div>
+
+        <div class="flex items-end">
+            <button type="submit" class="btn-primary w-full px-8 py-3 rounded-xl font-bold text-white shadow-lg shadow-indigo-500/20">
+                Enroll Student
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Student List -->
+<div id="student-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for student in students %}
+        {% include 'core/student_item.html' %}
+    {% empty %}
+        <div id="empty-state" class="col-span-full text-center py-24 text-slate-500 glass-card">
+            <svg class="w-20 h-20 mx-auto mb-6 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <p class="text-2xl font-medium">No students enrolled yet</p>
+            <p class="mt-2 text-slate-400">Fill the form above to add your first student record.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM-2</title>
+
+</head>
+
+<body>
+    <h1 style="text-align: center;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">DOM-2</h1>
+    <hr>
+
+    <form action="">
+        <input type="number" id="txt1" placeholder="Number1"> <br><br>
+        <input type="number" id="txt2" placeholder="Number2"> <br><br>
+        <button onclick="btnSum()">Sum</button>
+    </form>
+
+    <script>
+        function btnSum() {
+            var n1 = document.getElementById("txt1").value
+            var n2 = document.getElementById("txt2").value
+            var ans = Number(n1) + Number(n2)
+            alert("Sum:" + ans)
+        }
+    </script>
+
+</body>
+
+</html>

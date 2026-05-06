@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Note - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="glass-card p-8 rounded-3xl shadow-2xl">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold tracking-tight">Submit New Note</h2>
+            <p class="text-gray-500">Share your resources with the community.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Note Title</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Category</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.category.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">File Upload</label>
+                    {{ form.file }}
+                    {% if form.file.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.file.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold mb-2 text-gray-700">Description</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <button type="submit" class="w-full gradient-btn text-white py-4 rounded-xl font-bold text-lg shadow-lg">
+                Submit for Approval
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

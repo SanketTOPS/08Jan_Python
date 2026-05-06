@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify OTP - NotesApp{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="glass-card p-8 rounded-3xl shadow-2xl">
+        <h2 class="text-3xl font-bold mb-2 tracking-tight">Verify Identity</h2>
+        <p class="text-gray-500 mb-8">We've sent a 6-digit code to <span class="text-black font-semibold">{{ email }}</span></p>
+
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block text-sm font-semibold mb-2 text-gray-700">Enter OTP</label>
+                {{ form.otp }}
+                {% if form.otp.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.otp.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="w-full gradient-btn text-white py-4 rounded-xl font-bold text-lg shadow-lg">
+                Verify OTP
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+            <p class="text-gray-500 text-sm mb-4">Didn't receive the code?</p>
+            <a href="{% url 'resend_otp' %}" class="inline-block px-6 py-2 border-2 border-black rounded-full text-sm font-bold hover:bg-black hover:text-white transition">
+                Resend OTP
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
