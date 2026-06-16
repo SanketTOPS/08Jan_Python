@@ -1,0 +1,545 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --bg-dark: #090d16;
+    --card-bg: rgba(17, 24, 39, 0.75);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --primary: #8b5cf6;
+    --primary-glow: rgba(139, 92, 246, 0.35);
+    --secondary: #ec4899;
+    --secondary-glow: rgba(236, 72, 153, 0.35);
+    --accent-blue: #3b82f6;
+    --text-primary: #f3f4f6;
+    --text-muted: #9ca3af;
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Beautiful ambient glowing background orbs */
+body::before, body::after {
+    content: '';
+    position: absolute;
+    width: 35vw;
+    height: 35vw;
+    border-radius: 50%;
+    filter: blur(140px);
+    z-index: -1;
+    opacity: 0.4;
+    pointer-events: none;
+    animation: pulseOrbs 10s infinite alternate ease-in-out;
+}
+
+body::before {
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    top: -10%;
+    left: -10%;
+}
+
+body::after {
+    background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+    bottom: -10%;
+    right: -10%;
+    animation-delay: -5s;
+}
+
+@keyframes pulseOrbs {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(50px, 30px) scale(1.15);
+    }
+}
+
+/* Master Glassmorphic Container */
+.container {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+    margin: auto;
+}
+
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 40px 32px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+/* App Header Styles */
+.app-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.app-logo {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 25px var(--primary-glow);
+    animation: floatIcon 4s ease-in-out infinite;
+}
+
+.app-logo svg {
+    width: 32px;
+    height: 32px;
+    fill: #ffffff;
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+h1 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #ffffff 60%, var(--text-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Responsive Forms */
+.form-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    transition: var(--transition-smooth);
+}
+
+/* Phone input container with country code visual */
+.input-phone-container {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: var(--transition-smooth);
+    overflow: hidden;
+}
+
+.input-phone-prefix {
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-right: 1.5px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.flag-icon {
+    width: 20px;
+    height: 14px;
+    border-radius: 2px;
+    background-size: cover;
+    background-position: center;
+}
+
+.input-field {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    outline: none;
+    letter-spacing: 0.5px;
+}
+
+.input-phone-container:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+    background: rgba(139, 92, 246, 0.02);
+}
+
+.input-phone-container:focus-within .input-phone-prefix {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* 6-Digit OTP fields layout */
+.otp-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin: 24px 0;
+}
+
+.otp-digit {
+    width: 100%;
+    aspect-ratio: 1;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.otp-digit:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 15px var(--secondary-glow);
+    background: rgba(236, 72, 153, 0.03);
+    transform: scale(1.05);
+}
+
+/* Premium Buttons & Links */
+.btn {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition-smooth);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #ffffff;
+    box-shadow: 0 8px 20px var(--primary-glow);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 12px 28px var(--primary-glow),
+                0 0 0 3px rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Helper details (timer, link actions) */
+.helper-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    font-size: 13px;
+}
+
+.timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.timer-active {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.link-action {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.link-action:hover {
+    color: var(--secondary);
+    text-shadow: 0 0 10px var(--secondary-glow);
+}
+
+.link-action.disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+    text-shadow: none;
+}
+
+/* Back Link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 24px;
+    transition: var(--transition-smooth);
+}
+
+.back-link:hover {
+    color: #ffffff;
+    transform: translateX(-3px);
+}
+
+/* Welcome Page Specific Styles */
+.welcome-card {
+    text-align: center;
+    padding: 50px 40px;
+}
+
+.welcome-badge {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px dashed var(--success);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
+    animation: pulseBadge 2.5s infinite ease-in-out;
+}
+
+.welcome-badge svg {
+    width: 44px;
+    height: 44px;
+    fill: var(--success);
+}
+
+@keyframes pulseBadge {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
+    }
+    50% {
+        transform: scale(1.06);
+        box-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+    }
+}
+
+.phone-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.phone-badge svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--text-muted);
+}
+
+/* Alert Notification Banners */
+.alert-messages {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    width: calc(100% - 40px);
+    max-width: 440px;
+}
+
+.alert {
+    padding: 14px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: slideDownAlert 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownAlert {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #f87171;
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #fbbf24;
+}
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #60a5fa;
+}
+
+/* Debug / Demo Mode Alert Banner inside main card */
+.demo-banner {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.1));
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 24px;
+    text-align: center;
+    animation: pulseBorder 2s infinite alternate ease-in-out;
+}
+
+@keyframes pulseBorder {
+    0% { border-color: rgba(245, 158, 11, 0.25); }
+    100% { border-color: rgba(236, 72, 153, 0.4); }
+}
+
+.demo-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #fbbf24;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.demo-code {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 4px 12px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-top: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Spinner elements */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive scaling rules */
+@media (max-width: 480px) {
+    .glass-card {
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+    
+    h1 {
+        font-size: 22px;
+    }
+    
+    .otp-digit {
+        font-size: 20px;
+    }
+}

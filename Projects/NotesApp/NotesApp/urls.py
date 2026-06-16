@@ -12,12 +12,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', home_redirect, name='home'),
-    path('django-admin/', admin.site.urls),
-    path('', include('UserApp.urls')),
-    path('', include('AdminApp.urls')),
-    path('', include('NoteApp.urls')),
+    path('admin/', admin.site.urls),
     path('', include('CoreApp.urls')),
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('', include('UserApp.urls')),
+    path('', include('NoteApp.urls')),
+    path('', include('AdminApp.urls')),
+    path('payment/', include('PaymentApp.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

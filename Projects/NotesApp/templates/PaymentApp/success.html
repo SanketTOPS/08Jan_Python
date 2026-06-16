@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[70vh]">
+    <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-10 rounded-2xl shadow-2xl text-center max-w-md w-full animate-fade-in">
+        <div class="mb-6 inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/20 text-green-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h1 class="text-4xl font-bold text-white mb-4">Payment Successful!</h1>
+        <p class="text-gray-400 mb-8 text-lg">Thank you for going Premium! You now have full access to all features.</p>
+        <a href="{% url 'dashboard' %}" class="inline-block px-8 py-3 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 shadow-lg">
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fade-in 0.8s ease-out forwards;
+    }
+</style>
+{% endblock %}

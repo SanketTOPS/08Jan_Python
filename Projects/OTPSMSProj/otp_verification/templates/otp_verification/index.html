@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Bulk V2 SMS Portal</title>
+    <link rel="stylesheet" href="{% static 'otp_verification/style.css' %}">
+    <style>
+        /* Small styling addition for the text area and character counter */
+        textarea.input-field {
+            resize: none;
+            height: 120px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            font-family: inherit;
+            padding: 14px;
+            line-height: 1.5;
+            transition: var(--transition-smooth);
+        }
+        textarea.input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background: rgba(139, 92, 246, 0.02);
+            outline: none;
+        }
+        .counter-container {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            padding: 0 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Alert Notifications -->
+    {% if messages %}
+    <div class="alert-messages" id="alertContainer">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+            <span>
+                {% if message.tags == 'success' %}
+                    ✓
+                {% elif message.tags == 'error' %}
+                    ⚠
+                {% elif message.tags == 'warning' %}
+                    🛈
+                {% else %}
+                    ℹ
+                {% endif %}
+            </span>
+            <div>{{ message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container" style="max-width: 500px;">
+        <div class="glass-card" id="smsCard">
+            <div class="app-header">
+                <div class="app-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+                    </svg>
+                </div>
+                <h1>Quick SMS Gateway</h1>
+                <p class="subtitle">Send custom text messages instantly to any 10-digit mobile number using the Fast2SMS Quick SMS API.</p>
+            </div>
+
+            <form method="POST" id="smsForm" onsubmit="showLoader('smsSubmitBtn')">
+                {% csrf_token %}
+                
+                <!-- Phone input group -->
+                <div class="form-group">
+                    <label class="form-label" for="phone_number">Recipient Mobile Number</label>
+                    <div class="input-phone-container">
+                        <div class="input-phone-prefix">
+                            <span class="flag-icon" style="background-image: url('https://flagcdn.com/w40/in.png');"></span>
+                            <span>+91</span>
+                        </div>
+                        <input type="tel" 
+                               id="phone_number" 
+                               name="phone_number" 
+                               class="input-field" 
+                               placeholder="9876543210" 
+                               required 
+                               maxlength="10" 
+                               pattern="[6-9][0-9]{9}" 
+                               title="Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9" 
+                               value="{{ phone_number }}"
+                               autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Message input group -->
+                <div class="form-group">
+                    <label class="form-label" for="message_text">Message Content</label>
+                    <textarea id="message_text" 
+                              name="message_text" 
+                              class="input-field" 
+                              placeholder="Write your custom text message here..." 
+                              required 
+                              maxlength="500" 
+                              oninput="updateCharCounter(this)">{{ message_text }}</textarea>
+                    
+                    <div class="counter-container">
+                        <span id="smsCount">1 SMS Part</span>
+                        <span id="charCount">0 / 160 characters</span>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary" id="smsSubmitBtn">
+                    <span>Send SMS Message</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Front-End JavaScript logic -->
+    <script>
+        // Automatic alert closing
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translate(-50%, -20px)';
+                setTimeout(() => alert.remove(), 600);
+            }, 6000);
+        });
+
+        // Show spinner inside button during POST request
+        function showLoader(btnId) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                // Ensure inputs are validated before disabling
+                const form = document.getElementById('smsForm');
+                if (!form.checkValidity()) return;
+
+                btn.disabled = true;
+                const textSpan = btn.querySelector('span');
+                const svg = btn.querySelector('svg');
+                if (svg) svg.remove();
+                if (textSpan) textSpan.innerHTML = 'Sending...';
+                
+                const spinner = document.createElement('div');
+                spinner.className = 'spinner';
+                btn.appendChild(spinner);
+                form.submit();
+            }
+        }
+
+        // Live text content & SMS parts tracking
+        function updateCharCounter(textarea) {
+            const chars = textarea.value.length;
+            const charCountEl = document.getElementById('charCount');
+            const smsCountEl = document.getElementById('smsCount');
+            
+            charCountEl.innerText = `${chars} / 500 characters`;
+            
+            // Standard GSM SMS calculation (160 characters per SMS part)
+            let smsParts = 1;
+            if (chars > 160) {
+                // For multipart messages, standard GSM limit becomes 153 chars per part due to headers
+                smsParts = Math.ceil(chars / 153);
+            } else if (chars === 0) {
+                smsParts = 1;
+            }
+            
+            smsCountEl.innerText = `${smsParts} SMS Part${smsParts > 1 ? 's' : ''}`;
+            
+            // Visual warning if getting very long
+            if (chars > 140) {
+                charCountEl.style.color = "var(--secondary)";
+            } else {
+                charCountEl.style.color = "var(--text-muted)";
+            }
+        }
+    </script>
+</body>
+</html>

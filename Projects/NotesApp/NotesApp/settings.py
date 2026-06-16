@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'AdminApp',
     'NoteApp',
     'CoreApp',
+    'PaymentApp',
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Stripe Settings
+STRIPE_PUBLIC_KEY = 'pk_test_your_public_key_here'
+STRIPE_SECRET_KEY = 'sk_test_your_secret_key_here'
+STRIPE_WEBHOOK_SECRET = 'whsec_your_webhook_secret_here'

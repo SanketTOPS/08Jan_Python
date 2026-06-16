@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Dispatched - Fast2SMS Gateway</title>
+    <link rel="stylesheet" href="{% static 'otp_verification/style.css' %}">
+</head>
+<body>
+
+    <!-- Alert Notifications -->
+    {% if messages %}
+    <div class="alert-messages" id="alertContainer">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+            <span>
+                {% if message.tags == 'success' %}✓{% elif message.tags == 'error' %}⚠{% else %}ℹ{% endif %}
+            </span>
+            <div>{{ message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="container" style="max-width: 540px;">
+        <div class="glass-card welcome-card">
+            
+            <!-- Envelope Success Pulsing Badge -->
+            <div class="welcome-badge" style="border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); box-shadow: 0 0 25px rgba(59, 130, 246, 0.2);">
+                <svg viewBox="0 0 24 24" style="fill: #3b82f6;">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </div>
+
+            <h1 style="background: linear-gradient(135deg, #ffffff 60%, var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SMS Dispatched</h1>
+            <p class="subtitle" style="margin-bottom: 20px;">Your custom text message has been submitted to the Fast2SMS gateway pipeline.</p>
+
+            <!-- Recipient Phone Badge -->
+            <div class="phone-badge" style="margin: 10px 0 20px 0;">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+                <span>Sent to: +91 {{ phone_number }}</span>
+            </div>
+
+            <!-- Beautiful Sent Custom Message Text Box -->
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1.5px solid var(--border-color); border-radius: 18px; padding: 20px; text-align: left; margin-bottom: 20px;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; display: block; margin-bottom: 8px;">Message Payload</span>
+                <blockquote style="font-size: 14px; line-height: 1.6; color: #ffffff; font-style: italic; border-left: 3px solid var(--accent-blue); padding-left: 14px;">
+                    "{{ message_text }}"
+                </blockquote>
+            </div>
+
+            <!-- Detailed SMS Transmission Logs -->
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1.5px solid var(--border-color); border-radius: 18px; padding: 20px; text-align: left; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Transmission Details</span>
+                    {% if demo_mode %}
+                    <span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Demo Fallback</span>
+                    {% else %}
+                    <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Success</span>
+                    {% endif %}
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+                    <div>
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 2px; font-size: 11px;">Gateway API Route</span>
+                        <strong style="color: #ffffff;">Fast2SMS Quick SMS (q)</strong>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 2px; font-size: 11px;">Character Count</span>
+                        <strong style="color: #ffffff;">{{ message_text|length }} Characters</strong>
+                    </div>
+                    {% if demo_mode %}
+                    <div style="grid-column: span 2; margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                        <span style="color: var(--warning); display: block; margin-bottom: 2px; font-size: 11px; font-weight: 700;">API Exception Details</span>
+                        <code style="color: #fbbf24; font-family: monospace; font-size: 12px; word-break: break-all;">{{ api_error }}</code>
+                    </div>
+                    {% else %}
+                    <div style="grid-column: span 2; margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 2px; font-size: 11px;">Transmission Handshake</span>
+                        <code style="color: var(--success); font-family: monospace; font-size: 11px; word-break: break-all;">API_HANDSHAKE_COMPLETED_HTTP_200_OK</code>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Send Another Link -->
+            <a href="{% url 'reset' %}" class="btn btn-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M1 20v-6h6"></path>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                <span>Send Another SMS</span>
+            </a>
+
+        </div>
+    </div>
+
+    <script>
+        // Automatic alert close
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                alert.style.opacity = '0';
+                alert.style.transform = 'translate(-50%, -20px)';
+                setTimeout(() => alert.remove(), 600);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

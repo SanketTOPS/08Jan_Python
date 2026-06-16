@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India COVID-19 Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="min-h-screen pb-12">
+        <!-- Header -->
+        <header class="bg-indigo-700 text-white py-8 px-4 shadow-lg mb-8">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-indigo-500 rounded-full shadow-inner">
+                        <i class="fas fa-virus text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight">India COVID-19 Tracker</h1>
+                        <p class="text-indigo-200 text-sm">Real-time statistics for States and Union Territories</p>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0 text-right">
+                    <p class="text-indigo-100 text-xs uppercase tracking-widest font-semibold">Last Refreshed</p>
+                    <p class="text-lg font-medium">{{ last_refreshed }}</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4">
+            {% if success %}
+            <!-- Summary Stats -->
+            <section class="mb-12">
+                <h2 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
+                    National Summary
+                </h2>
+                <div class="stats-grid">
+                    <!-- Total Confirmed -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-orange-500 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-slate-500 text-sm font-semibold uppercase">Total Confirmed</p>
+                                <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ summary.total }}</h3>
+                            </div>
+                            <div class="p-3 bg-orange-100 text-orange-600 rounded-xl">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Discharged -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-emerald-500 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-slate-500 text-sm font-semibold uppercase">Discharged</p>
+                                <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ summary.discharged }}</h3>
+                            </div>
+                            <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl">
+                                <i class="fas fa-heartbeat text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Deaths -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-rose-500 card-hover">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-slate-500 text-sm font-semibold uppercase">Deaths</p>
+                                <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ summary.deaths }}</h3>
+                            </div>
+                            <div class="p-3 bg-rose-100 text-rose-600 rounded-xl">
+                                <i class="fas fa-skull-crossbones text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- State-wise Data -->
+            <section>
+                <div class="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2 text-indigo-600"></i>
+                        State-wise Breakdown
+                    </h2>
+                    <div class="relative w-full md:w-64">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-slate-400"></i>
+                        </span>
+                        <input type="text" id="stateSearch" placeholder="Search state..." 
+                            class="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white text-sm">
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left" id="stateTable">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200">
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Location</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Confirmed</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Discharged</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Deaths</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Recovery Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for region in regional %}
+                                <tr class="hover:bg-slate-50 transition-colors state-row">
+                                    <td class="px-6 py-4 whitespace-nowrap font-semibold text-slate-700 state-name">{{ region.loc }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold">
+                                            {{ region.totalConfirmed }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">
+                                            {{ region.discharged }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">
+                                            {{ region.deaths }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="w-full bg-slate-100 rounded-full h-2 max-w-[100px]">
+                                            <div class="bg-indigo-500 h-2 rounded-full" style="width: {% widthratio region.discharged region.totalConfirmed 100 %}%"></div>
+                                        </div>
+                                        <span class="text-[10px] text-slate-500 mt-1 block">
+                                            {% widthratio region.discharged region.totalConfirmed 100 %}% Recovered
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            {% else %}
+            <div class="flex flex-col items-center justify-center py-20">
+                <div class="bg-rose-100 text-rose-600 p-6 rounded-full mb-4">
+                    <i class="fas fa-exclamation-triangle text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800">Oops! Something went wrong</h3>
+                <p class="text-slate-500 mt-2">{{ error }}</p>
+                <button onclick="window.location.reload()" class="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    Try Again
+                </button>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-sm">Data Source: Ministry of Health and Family Welfare (MoHFW) via API.rootnet.in</p>
+            <p class="text-slate-500 mt-2 font-medium">Built with Django & Tailwind CSS</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple search functionality
+        document.getElementById('stateSearch').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('.state-row');
+            
+            rows.forEach(row => {
+                let stateName = row.querySelector('.state-name').textContent.toLowerCase();
+                if (stateName.includes(filter)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

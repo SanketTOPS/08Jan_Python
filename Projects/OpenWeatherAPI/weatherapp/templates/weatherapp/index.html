@@ -1,0 +1,221 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyCast | Premium Weather Insights</title>
+    <meta name="description" content="Get real-time weather updates with SkyCast. A premium, responsive weather application powered by OpenWeatherAPI.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        'glass-bg': 'rgba(255, 255, 255, 0.03)',
+                        'glass-border': 'rgba(255, 255, 255, 0.1)',
+                    },
+                    backgroundImage: {
+                        'monochrome-gradient': 'linear-gradient(to bottom, #ffffff, #94a3b8)',
+                        'accent-gradient': 'linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-outfit bg-black antialiased;
+                background-image: url("{% static 'weatherapp/images/monochrome_bg.png' %}");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+            }
+        }
+        @layer components {
+            .glass-card {
+                @apply bg-glass-bg backdrop-blur-3xl border border-glass-border rounded-[40px] shadow-2xl transition-all duration-500;
+            }
+            .text-gradient {
+                @apply bg-monochrome-gradient bg-clip-text text-transparent;
+            }
+            .detail-card {
+                @apply bg-white/[0.03] border border-glass-border p-5 rounded-3xl hover:bg-white/[0.06] transition-all duration-300 flex flex-col items-center text-center;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 py-12">
+    <div class="fixed inset-0 bg-black/60 pointer-events-none -z-10"></div>
+    
+    <main class="w-full max-w-2xl z-10">
+        <div class="glass-card p-8 md:p-12 text-center group hover:border-white/20">
+            <header>
+                <h1 class="text-[0.7rem] mb-8 opacity-40 tracking-[0.4em] uppercase font-light">SkyCast</h1>
+            </header>
+            
+            {% if messages %}
+            <div class="space-y-3 mb-8">
+                {% for message in messages %}
+                <div class="bg-white/10 border border-white/20 text-white py-3 px-4 rounded-2xl text-sm animate-pulse">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="mb-12">
+                <form method="POST" class="relative flex items-center group/search">
+                    {% csrf_token %}
+                    <input type="text" name="city" placeholder="Search for a city..." required autocomplete="off"
+                        class="w-full py-4 pl-6 pr-28 bg-white/5 border border-glass-border rounded-2xl text-white placeholder-slate-500 outline-none focus:bg-white/10 focus:border-white/30 transition-all text-base md:text-lg">
+                    <button type="submit" 
+                        class="absolute right-1.5 top-1.5 bottom-1.5 px-4 md:px-6 bg-accent-gradient rounded-xl text-black font-bold text-[0.7rem] md:text-[0.75rem] uppercase tracking-wider hover:scale-[1.03] active:scale-95 transition-all">
+                        Search
+                    </button>
+                </form>
+            </div>
+
+            {% if weather_data %}
+            <div class="animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                <div class="mb-12">
+                    <h2 class="text-5xl md:text-6xl font-extrabold mb-2 tracking-tighter text-gradient">{{ weather_data.city }}, {{ weather_data.country }}</h2>
+                    <p class="text-slate-400 text-[0.8rem] uppercase tracking-[0.3em]" id="current-date"></p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+                    <div class="flex flex-col items-center">
+                        <img src="http://openweathermap.org/img/wn/{{ weather_data.icon }}@4x.png" 
+                             alt="{{ weather_data.description }}"
+                             class="w-40 h-40 brightness-0 invert drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                        <p class="text-2xl text-slate-300 font-light capitalize">{{ weather_data.description }}</p>
+                    </div>
+                    <div class="flex flex-col items-center md:items-start">
+                        <div class="text-8xl md:text-9xl font-black text-gradient leading-none tracking-tighter">
+                            {{ weather_data.temperature }}°
+                        </div>
+                        <div class="flex gap-4 mt-4 text-slate-400 font-medium">
+                            <span>H: {{ weather_data.temp_max }}°</span>
+                            <span>L: {{ weather_data.temp_min }}°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Weather Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-10">
+                    <!-- Humidity -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Humidity</p>
+                        <p class="text-lg font-bold text-white">{{ weather_data.humidity }}%</p>
+                    </div>
+
+                    <!-- Wind Speed -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Wind</p>
+                        <p class="text-lg font-bold text-white">{{ weather_data.wind_speed }} <small class="text-[0.6rem] font-normal opacity-60">km/h</small></p>
+                    </div>
+
+                    <!-- Pressure -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Pressure</p>
+                        <p class="text-lg font-bold text-white">{{ weather_data.pressure }} <small class="text-[0.6rem] font-normal opacity-60">hPa</small></p>
+                    </div>
+
+                    <!-- Visibility -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Visibility</p>
+                        <p class="text-lg font-bold text-white">{{ weather_data.visibility }} <small class="text-[0.6rem] font-normal opacity-60">km</small></p>
+                    </div>
+
+                    <!-- Cloudiness -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Clouds</p>
+                        <p class="text-lg font-bold text-white">{{ weather_data.clouds }}%</p>
+                    </div>
+
+                    <!-- Sunrise -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Sunrise</p>
+                        <p class="text-lg font-bold text-white text-xs">{{ weather_data.sunrise }}</p>
+                    </div>
+
+                    <!-- Sunset -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Sunset</p>
+                        <p class="text-lg font-bold text-white text-xs">{{ weather_data.sunset }}</p>
+                    </div>
+
+                    <!-- Feels Like -->
+                    <div class="detail-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <p class="text-[0.65rem] text-slate-500 uppercase tracking-widest mb-1">Feels Like</p>
+                        <p class="text-lg font-bold text-white">{{ weather_data.feels_like }}°</p>
+                    </div>
+                </div>
+
+                <a href="https://www.google.com/maps/search/?api=1&query={{ weather_data.lat }},{{ weather_data.lon }}" 
+                   target="_blank"
+                   class="inline-flex items-center justify-center w-full py-4 px-6 bg-white text-black font-bold rounded-2xl hover:bg-slate-200 transition-all transform active:scale-95 group/explore">
+                    <span>Explore {{ weather_data.city }} on Maps</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transition-transform group-hover/explore:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </a>
+            </div>
+            {% else %}
+            <div class="py-24 opacity-60">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                </svg>
+                <p class="text-slate-400 font-light text-lg">Search for a city to see complete weather insights.</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        // Update date dynamically
+        const dateElement = document.getElementById('current-date');
+        if (dateElement) {
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            dateElement.textContent = new Date().toLocaleDateString('en-US', options);
+        }
+    </script>
+</body>
+</html>
